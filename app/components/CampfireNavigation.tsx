@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Flame, LayoutDashboard } from "lucide-react";
+import { Flame, LayoutDashboard, Presentation } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NavLink } from "react-router";
 
@@ -15,6 +15,7 @@ interface NavigationItem {
 
 const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   { to: "/stats", label: "우리 기록", icon: LayoutDashboard },
+  { to: "/display", label: "현황판", icon: Presentation },
 ];
 
 export function CampfireNavigation(): ReactElement {

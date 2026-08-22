@@ -6,6 +6,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import {
@@ -23,6 +24,9 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: Readonly<LayoutProps>): ReactElement {
+  const location = useLocation();
+  const isDisplayRoute = location.pathname === "/display";
+
   return (
     <html lang="ko">
       <head>
@@ -38,7 +42,7 @@ export function Layout({ children }: Readonly<LayoutProps>): ReactElement {
         >
           본문으로 건너뛰기
         </a>
-        <CampfireNavigation />
+        {isDisplayRoute ? null : <CampfireNavigation />}
         {children}
         <ScrollRestoration />
         <Scripts />
