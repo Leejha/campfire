@@ -3,7 +3,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"test": "node --test",
+		"test": "node --test tests/notion.test.mts",
 		"typecheck": "react-router typegen && tsc -b"
 	},
 	"dependencies": {
