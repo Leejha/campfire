@@ -3,8 +3,14 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
+		"build": "react-router build",
+		"dev": "react-router dev",
 		"test": "node --test tests/notion.test.mts",
-		"typecheck": "react-router typegen && tsc -b"
+		"typecheck": "wrangler types && react-router typegen && tsc -b",
+		"deploy": "pnpm run build && wrangler deploy",
+		"preview": "pnpm run build && vite preview",
+		"cf-typegen": "wrangler types",
+		"postinstall": "wrangler types"
 	},
 	"dependencies": {
 		"@fontsource-variable/geist": "^5.3.0",
