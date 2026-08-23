@@ -20,6 +20,7 @@ import {
   Progress,
   StatusBadge,
 } from "~/components";
+import { PrivateFocusBoard } from "~/features/private-focus";
 import { getCampfireDashboard } from "~/lib/notion";
 import type { CampfireDashboard, SessionParticipant } from "~/lib/notion";
 import type { Route } from "./+types/home";
@@ -373,6 +374,8 @@ export default function Home({
             </CardContent>
           </Card>
         </section>
+
+        <PrivateFocusBoard />
       </main>
     </>
   );
