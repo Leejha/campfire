@@ -11,6 +11,7 @@ import {
   Divider,
   StatusBadge,
 } from "~/components";
+import { GroupReflection } from "~/features/group-reflection";
 import { getCampfireDashboard } from "~/lib/notion";
 import type { CampfireDashboard, CumulativeMetrics } from "~/lib/notion";
 import type { Route } from "./+types/stats";
@@ -165,6 +166,8 @@ export default function Stats({ loaderData }: Route.ComponentProps): ReactElemen
             </ul>
           </section>
         ) : null}
+
+        <GroupReflection cumulativeMetrics={cumulativeMetrics} />
       </main>
     </>
   );
