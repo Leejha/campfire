@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Flame, LayoutDashboard, Presentation } from "lucide-react";
+import { Flame, LayoutDashboard, Presentation, Share2 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NavLink } from "react-router";
 
@@ -15,6 +15,7 @@ interface NavigationItem {
 
 const NAVIGATION_ITEMS: readonly NavigationItem[] = [
   { to: "/stats", label: "우리 기록", icon: LayoutDashboard },
+  { to: "/invite", label: "초대 링크", icon: Share2 },
   { to: "/display", label: "현황판", icon: Presentation },
 ];
 
