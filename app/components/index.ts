@@ -2,8 +2,6 @@ export { Card, CardContent, CardHeader, CardTitle } from "./Card";
 export { CampfireNavigation } from "./CampfireNavigation";
 export { Button } from "./Button";
 export { Divider } from "./Divider";
-export { Input } from "./Input";
-export { Label } from "./Label";
 export { Progress } from "./Progress";
 export { StatusBadge } from "./StatusBadge";
 export { Textarea } from "./Textarea";
