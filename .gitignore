@@ -25,5 +25,5 @@ openspec/
 .claude/
 .codex/
 .agents/
-AGENTS.md
 CLAUDE.md
+.gstack/
