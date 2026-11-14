@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   CheckCircle2,
   Circle,
@@ -8,8 +8,6 @@ import {
   RefreshCw,
   Users,
 } from "lucide-react";
-import { useRevalidator } from "react-router";
-import { env } from "cloudflare:workers";
 
 import {
   Card,
@@ -20,9 +18,9 @@ import {
   Progress,
   StatusBadge,
 } from "~/components";
-import { getCampfireDashboard } from "~/lib/notion";
+import { getCampfireDashboardQueryOptions } from "~/features/notion-data";
+import { getQueryClient } from "~/lib/get-query-client";
 import type { CampfireDashboard, SessionParticipant } from "~/lib/notion";
-import type { Route } from "./+types/home";
 
 const AUTO_REFRESH_INTERVAL_MS = 75_000;
 const MAX_PROGRESS_VALUE = 100;
@@ -38,11 +36,6 @@ const KOREAN_TIME_FORMATTER = new Intl.DateTimeFormat("ko-KR", {
 
 const KOREAN_NUMBER_FORMATTER = new Intl.NumberFormat("ko-KR");
 
-interface HomeLoaderData {
-  dashboard: CampfireDashboard;
-  loadedAt: string;
-}
-
 interface DateValue {
   date: string;
 }
@@ -55,13 +48,27 @@ interface ParticipantCardProps {
   participant: SessionParticipant;
 }
 
-export async function loader(): Promise<HomeLoaderData> {
-  const dashboard = await getCampfireDashboard(env);
+export async function clientLoader(): Promise<CampfireDashboard> {
+  const queryClient = getQueryClient();
+  return queryClient.ensureQueryData(
+    getCampfireDashboardQueryOptions({ refetchInterval: AUTO_REFRESH_INTERVAL_MS }),
+  );
+}
 
-  return {
-    dashboard,
-    loadedAt: new Date().toISOString(),
-  };
+clientLoader.hydrate = true as const;
+
+export function HydrateFallback(): React.ReactElement {
+  return (
+    <main
+      id="main-content"
+      tabIndex={-1}
+      className="mx-auto flex min-h-svh w-full max-w-6xl items-center px-4 py-8 sm:px-6 sm:py-12"
+    >
+      <p className="text-lg leading-7 text-fg-neutral-muted" role="status">
+        세션 현황을 불러오고 있어요.
+      </p>
+    </main>
+  );
 }
 
 function formatSessionDate({ date }: Readonly<DateValue>): string {
@@ -70,30 +77,6 @@ function formatSessionDate({ date }: Readonly<DateValue>): string {
 
 function formatLoadedTime({ loadedAt }: Readonly<LoadedTimeValue>): string {
   return KOREAN_TIME_FORMATTER.format(new Date(loadedAt));
-}
-
-function useSessionAutoRefresh(): boolean {
-  const revalidator = useRevalidator();
-  const isRefreshing = revalidator.state !== "idle";
-
-  useEffect(() => {
-    const refreshSession = (): void => {
-      if (revalidator.state === "idle") {
-        void revalidator.revalidate();
-      }
-    };
-
-    const intervalId = window.setInterval(
-      refreshSession,
-      AUTO_REFRESH_INTERVAL_MS,
-    );
-
-    return (): void => {
-      window.clearInterval(intervalId);
-    };
-  }, [revalidator]);
-
-  return isRefreshing;
 }
 
 function ParticipantCard({
@@ -141,7 +124,7 @@ function ParticipantCard({
           {nextTask ? (
             <section className="grid gap-3">
               <div className="flex items-center gap-2">
-                <ClipboardList aria-hidden="true" className="size-4 text-primary" />
+                <ClipboardList aria-hidden="true" className="size-4 text-fg-brand" />
                 <h4 className="text-sm font-semibold">다음 Task</h4>
               </div>
               <p className="min-w-0 break-words text-base font-semibold leading-7">
@@ -149,11 +132,11 @@ function ParticipantCard({
               </p>
             </section>
           ) : (
-            <div className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+            <div className="flex items-start gap-3 text-sm leading-6 text-fg-neutral-muted">
               {hasCompletedAllTasks ? (
                 <CheckCircle2
                   aria-hidden="true"
-                  className="mt-0.5 size-5 shrink-0 text-success"
+                  className="mt-0.5 size-5 shrink-0 text-fg-positive"
                 />
               ) : (
                 <ClipboardX
@@ -177,20 +160,20 @@ function ParticipantCard({
                       {task.checked ? (
                         <CheckCircle2
                           aria-hidden="true"
-                          className="mt-0.5 size-5 shrink-0 text-success"
+                          className="mt-0.5 size-5 shrink-0 text-fg-positive"
                         />
                       ) : (
                         <Circle
                           aria-hidden="true"
-                          className="mt-0.5 size-5 shrink-0 text-muted-foreground"
+                          className="mt-0.5 size-5 shrink-0 text-fg-neutral-muted"
                         />
                       )}
                       <div className="grid min-w-0 gap-1 break-words leading-7">
                         <p
                           className={
                             task.checked
-                              ? "text-muted-foreground line-through"
-                              : "text-foreground"
+                              ? "text-fg-neutral-muted line-through"
+                              : "text-fg-neutral"
                           }
                         >
                           <span className="sr-only">
@@ -204,7 +187,7 @@ function ParticipantCard({
                 )}
               </ul>
             ) : (
-              <p className="text-sm leading-6 text-muted-foreground">
+              <p className="text-sm leading-6 text-fg-neutral-muted">
                 {progressStatus}
               </p>
             )}
@@ -226,7 +209,7 @@ function ParticipantCard({
                 valueText={progressMessage}
               />
             ) : null}
-            <p className="text-sm leading-6 text-muted-foreground">
+            <p className="text-sm leading-6 text-fg-neutral-muted">
               {progressStatus}
             </p>
           </section>
@@ -236,23 +219,24 @@ function ParticipantCard({
   );
 }
 
-export default function Home({
-  loaderData,
-}: Route.ComponentProps): React.ReactElement {
-  const isRefreshing = useSessionAutoRefresh();
-  const { cumulativeMetrics, session } = loaderData.dashboard;
+export default function Home(): React.ReactElement {
+  const { data: dashboard, dataUpdatedAt, isFetching } = useSuspenseQuery(
+    getCampfireDashboardQueryOptions({ refetchInterval: AUTO_REFRESH_INTERVAL_MS }),
+  );
+  const { cumulativeMetrics, session } = dashboard;
   const sessionDate = formatSessionDate({ date: session.date });
-  const loadedTime = formatLoadedTime({ loadedAt: loaderData.loadedAt });
-  const refreshStatus = isRefreshing
+  const loadedAt = new Date(dataUpdatedAt).toISOString();
+  const loadedTime = formatLoadedTime({ loadedAt });
+  const refreshStatus = isFetching
     ? "새 소식을 확인하고 있어요."
     : "75초마다 새 소식을 확인해요.";
-  const refreshIconClassName = isRefreshing
+  const refreshIconClassName = isFetching
     ? "size-4 animate-spin motion-reduce:animate-none"
     : "size-4";
 
   return (
     <>
-      <title>Campfire | 함께 만드는 모각코</title>
+      <title>모닥불 | 함께 만드는 모각코</title>
       <meta
         name="description"
         content="함께 만드는 모각코의 최신 세션과 Task 진행 상황을 확인해요."
@@ -266,13 +250,13 @@ export default function Home({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-3">
               <StatusBadge tone="accent">라이브 세션</StatusBadge>
-              <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <Flame aria-hidden="true" className="size-4 text-primary" />
+              <p className="flex items-center gap-2 text-sm font-medium text-fg-neutral-muted">
+                <Flame aria-hidden="true" className="size-4 text-fg-brand" />
                 <time dateTime={session.date}>{sessionDate}</time>
               </p>
             </div>
             <p
-              className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
+              className="flex items-center gap-2 text-sm font-medium text-fg-neutral-muted"
               role="status"
             >
               <RefreshCw aria-hidden="true" className={refreshIconClassName} />
@@ -283,13 +267,13 @@ export default function Home({
             <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
               함께 이어가는 Task
             </h1>
-            <p className="text-lg leading-7 text-muted-foreground">
+            <p className="text-lg leading-7 text-fg-neutral-muted">
               각자의 다음 Task와 진행 상황을 한눈에 볼 수 있어요.
             </p>
           </div>
           <Divider />
-          <p className="text-sm leading-6 text-muted-foreground">
-            <time dateTime={loaderData.loadedAt}>
+          <p className="text-sm leading-6 text-fg-neutral-muted">
+            <time dateTime={loadedAt}>
               {loadedTime}에 마지막으로 확인했어요.
             </time>
           </p>
@@ -299,7 +283,7 @@ export default function Home({
           <div className="grid gap-3">
             <div className="flex flex-wrap items-center gap-3">
               <StatusBadge tone="primary">현재 세션</StatusBadge>
-              <p className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+              <p className="flex items-center gap-2 text-sm font-medium text-fg-neutral-muted">
                 <Users aria-hidden="true" className="size-4" />
                 {session.participants.length}명이 함께하고 있어요.
               </p>
@@ -307,14 +291,14 @@ export default function Home({
             <h2 id="participants-title" className="text-2xl font-semibold tracking-tight">
               오늘 함께하는 사람이에요
             </h2>
-            <p className="text-sm leading-6 text-muted-foreground">
+            <p className="text-sm leading-6 text-fg-neutral-muted">
               Task는 '동사 + 작업 대상 + 완료 기준'으로 적으면 시작하기 쉬워요.
             </p>
           </div>
           {session.participants.length === 0 ? (
             <Card>
               <CardContent>
-                <p className="leading-7 text-muted-foreground">
+                <p className="leading-7 text-fg-neutral-muted">
                   아직 참여자가 없어요. 노션에 이름을 적으면 여기에서 만날 수
                   있어요.
                 </p>
@@ -332,7 +316,7 @@ export default function Home({
         </section>
 
         <section className="grid gap-6" aria-labelledby="cumulative-title">
-          <Card className="border-border shadow-none">
+          <Card className="border-stroke-neutral-weak shadow-none">
             <CardContent className="grid gap-6">
               <div className="flex flex-wrap items-center gap-3">
                 <StatusBadge tone="neutral">누적 요약</StatusBadge>
@@ -346,7 +330,7 @@ export default function Home({
               <Divider />
               <dl className="grid grid-cols-1 gap-5 sm:grid-cols-3">
                 <div className="grid gap-1">
-                  <dt className="text-sm font-medium text-muted-foreground">
+                  <dt className="text-sm font-medium text-fg-neutral-muted">
                     총 세션
                   </dt>
                   <dd className="text-3xl font-semibold tracking-tight tabular-nums">
@@ -354,7 +338,7 @@ export default function Home({
                   </dd>
                 </div>
                 <div className="grid gap-1">
-                  <dt className="text-sm font-medium text-muted-foreground">
+                  <dt className="text-sm font-medium text-fg-neutral-muted">
                     완료한 Task
                   </dt>
                   <dd className="text-3xl font-semibold tracking-tight tabular-nums">
@@ -362,7 +346,7 @@ export default function Home({
                   </dd>
                 </div>
                 <div className="grid gap-1">
-                  <dt className="text-sm font-medium text-muted-foreground">
+                  <dt className="text-sm font-medium text-fg-neutral-muted">
                     함께한 참여
                   </dt>
                   <dd className="text-3xl font-semibold tracking-tight tabular-nums">

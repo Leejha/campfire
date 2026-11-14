@@ -12,7 +12,7 @@ export function Divider({
   return (
     <ShadcnSeparator
       decorative
-      className={cn("bg-border/80", className)}
+      className={cn("bg-stroke-neutral-subtle", className)}
       {...props}
     />
   );

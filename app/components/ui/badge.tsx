@@ -5,20 +5,20 @@ import { Slot } from "radix-ui"
 import { cn } from "~/lib/utils"
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden rounded-4xl border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge inline-flex h-x5 w-fit shrink-0 items-center justify-center gap-x1 overflow-hidden rounded-r6 border border-transparent px-x2 py-x0_5 t2-medium whitespace-nowrap transition-all focus-visible:border-stroke-focus-ring focus-visible:ring-[3px] focus-visible:ring-stroke-focus-ring/50 has-data-[icon=inline-end]:pr-x1_5 has-data-[icon=inline-start]:pl-x1_5 aria-invalid:border-stroke-critical-solid aria-invalid:ring-stroke-critical-solid/20 [&>svg]:pointer-events-none [&>svg]:size-x3!",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        default: "bg-bg-brand-solid text-fg-neutral-inverted [a]:hover:bg-bg-brand-solid-pressed",
         secondary:
-          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+          "bg-bg-neutral-weak text-fg-neutral [a]:hover:bg-bg-layer-default-pressed",
         destructive:
-          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+          "bg-bg-critical-weak text-fg-critical focus-visible:ring-stroke-critical-solid/20 [a]:hover:bg-bg-critical-weak-pressed",
         outline:
-          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+          "border-stroke-neutral-weak text-fg-neutral [a]:hover:bg-bg-neutral-weak [a]:hover:text-fg-neutral-muted",
         ghost:
-          "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          "hover:bg-bg-neutral-weak hover:text-fg-neutral-muted",
+        link: "text-fg-brand underline-offset-4 hover:underline",
       },
     },
     defaultVariants: {

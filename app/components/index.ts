@@ -5,4 +5,5 @@ export { Divider } from "./Divider";
 export { Progress } from "./Progress";
 export { StatusBadge } from "./StatusBadge";
 export { Textarea } from "./Textarea";
+export { QueryProvider } from "./QueryProvider";
 export type { StatusBadgeTone } from "./StatusBadge";

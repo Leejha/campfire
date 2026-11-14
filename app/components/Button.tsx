@@ -8,7 +8,7 @@ interface ButtonProps extends ComponentProps<typeof ShadcnButton> {}
 export function Button({ className, ...props }: Readonly<ButtonProps>): ReactElement {
   return (
     <ShadcnButton
-      className={cn("focus-visible:ring-ring/50", className)}
+      className={cn("focus-visible:ring-stroke-focus-ring/50", className)}
       {...props}
     />
   );

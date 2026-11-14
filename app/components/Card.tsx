@@ -22,7 +22,7 @@ export function Card({
 }: Readonly<CardProps>): ReactElement {
   return (
     <ShadcnCard
-      className={cn("border border-border/80 bg-card shadow-xs", className)}
+      className={cn("border border-stroke-neutral-subtle bg-bg-layer-default shadow-s1", className)}
       {...props}
     />
   );
@@ -32,19 +32,19 @@ export function CardHeader({
   className,
   ...props
 }: Readonly<CardHeaderProps>): ReactElement {
-  return <ShadcnCardHeader className={cn("gap-3", className)} {...props} />;
+  return <ShadcnCardHeader className={cn("gap-x3", className)} {...props} />;
 }
 
 export function CardTitle({
   className,
   ...props
 }: Readonly<CardTitleProps>): ReactElement {
-  return <ShadcnCardTitle className={cn("text-foreground", className)} {...props} />;
+  return <ShadcnCardTitle className={cn("text-fg-neutral", className)} {...props} />;
 }
 
 export function CardContent({
   className,
   ...props
 }: Readonly<CardContentProps>): ReactElement {
-  return <ShadcnCardContent className={cn("text-foreground", className)} {...props} />;
+  return <ShadcnCardContent className={cn("text-fg-neutral", className)} {...props} />;
 }

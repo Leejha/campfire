@@ -8,7 +8,7 @@ interface TextareaProps extends ComponentProps<typeof ShadcnTextarea> {}
 export function Textarea({ className, ...props }: Readonly<TextareaProps>): ReactElement {
   return (
     <ShadcnTextarea
-      className={cn("bg-background", className)}
+      className={cn("bg-bg-layer-default", className)}
       {...props}
     />
   );

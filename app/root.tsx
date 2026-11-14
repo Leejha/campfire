@@ -1,4 +1,5 @@
 import type { ReactElement, ReactNode } from "react";
+import { generateThemingScript } from "@seed-design/css/theming";
 import {
   isRouteErrorResponse,
   Links,
@@ -15,6 +16,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
+  QueryProvider,
 } from "~/components";
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -28,16 +30,22 @@ export function Layout({ children }: Readonly<LayoutProps>): ReactElement {
   const isDisplayRoute = location.pathname === "/display";
 
   return (
-    <html lang="ko">
+    <html lang="ko" data-seed-color-mode="light-only">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: generateThemingScript({ mode: "light-only" }),
+          }}
+        />
         <Meta />
         <Links />
       </head>
       <body>
         <a
-          className="sr-only focus:not-sr-only focus:flex focus:min-h-11 focus:items-center focus:justify-center focus:bg-primary focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-primary-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+          className="sr-only focus:not-sr-only focus:flex focus:min-h-11 focus:items-center focus:justify-center focus:bg-bg-brand-solid focus:px-x4 focus:py-x3 focus:t4-bold focus:text-fg-neutral-inverted focus:outline-none focus:ring-2 focus:ring-stroke-focus-ring focus:ring-offset-2 focus:ring-offset-bg-layer-default"
           href="#main-content"
         >
           본문으로 건너뛰기
@@ -52,7 +60,11 @@ export function Layout({ children }: Readonly<LayoutProps>): ReactElement {
 }
 
 export default function App(): ReactElement {
-  return <Outlet />;
+  return (
+    <QueryProvider>
+      <Outlet />
+    </QueryProvider>
+  );
 }
 
 export function ErrorBoundary({
@@ -76,20 +88,20 @@ export function ErrorBoundary({
     <main
       id="main-content"
       tabIndex={-1}
-      className="mx-auto flex min-h-svh w-full max-w-3xl items-center px-4 py-8 sm:px-6"
+      className="mx-auto flex min-h-svh w-full max-w-3xl items-center px-x4 py-x8 sm:px-x6"
     >
       <Card className="w-full">
         <CardHeader>
           <CardTitle>
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            <h1 className="t9-bold tracking-tight sm:t10-bold">
               {message}
             </h1>
           </CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4">
-          <p className="leading-7 text-muted-foreground">{details}</p>
+        <CardContent className="grid gap-x4">
+          <p className="t5-regular text-fg-neutral-muted">{details}</p>
           {stack && (
-            <pre className="overflow-x-auto rounded-md border border-border bg-muted p-4 text-sm">
+            <pre className="overflow-x-auto rounded-r2 border border-stroke-neutral-subtle bg-bg-neutral-weak p-x4 t4-regular">
               <code>{stack}</code>
             </pre>
           )}

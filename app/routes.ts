@@ -4,4 +4,5 @@ export default [
   index("routes/home.tsx"),
   route("stats", "routes/stats.tsx"),
   route("display", "routes/display.tsx"),
+  route("api/notion/dashboard", "routes/api.notion-dashboard.ts"),
 ] satisfies RouteConfig;

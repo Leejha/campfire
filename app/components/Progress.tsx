@@ -32,7 +32,7 @@ export function Progress({
     <ShadcnProgress
       aria-label={label}
       aria-valuetext={valueText}
-      className={cn("h-2.5 bg-muted", className)}
+      className={cn("h-x2_5 bg-bg-neutral-weak", className)}
       value={clampedValue}
       {...props}
     />

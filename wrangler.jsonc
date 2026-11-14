@@ -7,13 +7,22 @@
 	"name": "campfire",
 	"compatibility_date": "2026-08-17",
 	"main": "./workers/app.ts",
+	"triggers": { "crons": ["*/5 * * * *"] },
 	"vars": {
 		"VALUE_FROM_CLOUDFLARE": "Hello from Cloudflare"
 	},
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "campfire",
+			"database_id": "1af4c9a0-53bb-4411-861f-7d6e8721fb2e",
+			"migrations_dir": "./migrations"
+		}
+	],
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": true
+	"upload_source_maps": true,
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
