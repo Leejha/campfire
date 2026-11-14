@@ -1,5 +1,5 @@
 import type { ReactElement } from "react";
-import { Flame, LayoutDashboard, Presentation } from "lucide-react";
+import { Flame, LayoutDashboard, Presentation, Timer } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { NavLink } from "react-router";
 
@@ -14,6 +14,7 @@ interface NavigationItem {
 }
 
 const NAVIGATION_ITEMS: readonly NavigationItem[] = [
+  { to: "/session", label: "모각코", icon: Timer },
   { to: "/stats", label: "내 기록", icon: LayoutDashboard },
   { to: "/display", label: "현황판", icon: Presentation },
 ];
